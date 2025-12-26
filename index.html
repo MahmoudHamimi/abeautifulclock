@@ -13,7 +13,6 @@
       --surface-strong: rgba(255,255,255,0.28);
       --text-main: #ffffff;
       --text-muted: #dbeafe;
-      --dropdown-text: #ffeb3b; /* New color for dropdown options */
     }
 
     * {
@@ -32,7 +31,7 @@
       color: var(--text-main);
       justify-content: center;
       position: relative;
-      padding-bottom: 100px; /* space for banner */
+      padding-bottom: 100px;
     }
 
     .layout {
@@ -46,36 +45,34 @@
     .clock-container,
     .game-container,
     .weather-container {
+      background: var(--surface);
+      backdrop-filter: blur(14px);
+      border-radius: 22px;
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255,255,255,0.18);
+    }
+
+    .clock-container {
+      padding: 42px 76px;
+      text-align: center;
+    }
+
+    .time {
+      font-size: clamp(4rem, 9vw, 7.5rem);
+      font-weight: 600;
+      letter-spacing: 3px;
+    }
+
+    .date {
+      margin-top: 14px;
+      font-size: 1.15rem;
+      color: var(--text-muted);
+    }
+
+    .weather-container {
       padding: 28px;
       text-align: center;
       min-width: 260px;
-    }
-
-    .funfact-container {
-      margin-top: 40px;
-      padding: 36px 60px;
-      max-width: 800px;
-      background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(37,99,235,0.25));
-      backdrop-filter: blur(16px);
-      border-radius: 28px;
-      text-align: center;
-      box-shadow: 0 40px 80px rgba(0,0,0,0.45);
-      border: 1px solid rgba(255,255,255,0.25);
-    }
-
-    .funfact-text {
-      font-size: 1.6rem;
-      font-weight: 600;
-      line-height: 1.8;
-      margin-bottom: 26px;
-      color: #f8fafc;
-    }
-
-    .funfact-btn {
-      padding: 14px 40px;
-      font-size: 1.15rem;
-      font-weight: 600;
-      border-radius: 16px;
     }
 
     .weather-container select {
@@ -84,7 +81,7 @@
       border-radius: 8px;
       border: none;
       background: rgba(255,255,255,0.2);
-      color: var(--dropdown-text); /* Changed color */
+      color: #ffeb3b;
       font-size: 1rem;
       cursor: pointer;
     }
@@ -95,17 +92,19 @@
       line-height: 1.6;
     }
 
+    .fun-fact {
+      margin-top: 16px;
+      padding: 14px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 14px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
     .game-container {
       padding: 34px;
       text-align: center;
       min-width: 260px;
-    }
-
-    .game-container h2 {
-      margin-bottom: 18px;
-      font-size: 1.25rem;
-      font-weight: 600;
-      color: var(--text-muted);
     }
 
     .board {
@@ -127,40 +126,17 @@
       font-size: 2.2rem;
       font-weight: 600;
       cursor: pointer;
-      user-select: none;
-      transition: transform 0.15s, background 0.15s;
     }
 
-    .cell:hover {
-      background: rgba(255,255,255,0.4);
-      transform: translateY(-2px);
-    }
+    .cell.win { background: linear-gradient(135deg, #22c55e, #16a34a); }
+    .cell.lose { opacity: 0.35; }
 
-    .cell.win {
-      background: linear-gradient(135deg, #22c55e, #16a34a);
-      transform: scale(1.15);
-    }
-
-    .cell.lose {
-      opacity: 0.35;
-    }
-
-    .status {
-      margin: 16px 0;
-      font-size: 1.25rem;
-      font-weight: 700;
-      color: var(--accent);
-      text-transform: uppercase;
-    }
-
-    .status.win {
-      color: #22c55e;
-      transform: scale(1.1);
-    }
+    .status { margin: 16px 0; font-size: 1.25rem; font-weight: 700; }
+    .status.win { color: #22c55e; }
 
     button {
-      margin-top: 14px;
-      padding: 10px 26px;
+      margin-top: 10px;
+      padding: 8px 20px;
       border: none;
       border-radius: 12px;
       background: linear-gradient(135deg, var(--primary), var(--accent));
@@ -171,58 +147,38 @@
     .ad-banner {
       position: fixed;
       bottom: 0;
-      left: 0;
       width: 100%;
       height: 80px;
       background: rgba(0,0,0,0.7);
-      color: #f8fafc;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
-      z-index: 100;
-    }
-
-    @media (max-width: 600px) {
-      .clock-container {
-        padding: 30px 40px;
-      }
-      .ad-banner {
-        font-size: 0.9rem;
-      }
     }
   </style>
 </head>
 <body>
   <div class="layout">
     <div class="clock-container">
-      <div class="time" id="time">00:00:00</div>
-      <div class="date" id="date">Loading date...</div>
+      <div class="time" id="time"></div>
+      <div class="date" id="date"></div>
     </div>
 
     <div class="weather-container">
       <h2>Weather</h2>
       <select id="citySelect">
-        <option value="31.2001,29.9187">Cairo</option>
         <option value="31.2001,29.9187" selected>Alexandria</option>
+        <option value="31.2001,29.9187">Cairo</option>
         <option value="31.2304,121.4737">Shanghai</option>
         <option value="38.9072,-77.0369">Washington</option>
         <option value="51.5074,-0.1278">London</option>
         <option value="24.7136,46.6753">Riyadh</option>
       </select>
-      <div class="weather" id="weather">Loading weather...</div>
-      <button id="factBtn" style="margin-top:14px;font-size:1.1rem;padding:12px 28px">Show Fun Fact</button>
-      <div class="weather" id="funFact" style="margin-top:14px;font-style:italic;font-size:1.25rem;line-height:1.6"></div>
-    </div>
-
-    <!-- FUN FACT SECTION -->
-    <div class="funfact-container">
-      <div class="funfact-text" id="funFact">Click the button to see a fun fact!</div>
-      <button class="funfact-btn" onclick="showFunFact()">Show Fun Fact</button>
+      <div class="weather" id="weather"></div>
+      <div class="fun-fact" id="funFact">Click for a fun fact!</div>
+      <button onclick="showFunFact()">Fun Fact</button>
     </div>
 
     <div class="game-container">
-      <h2>Tic Tac Toe</h2>
       <div class="board" id="board"></div>
       <div class="status" id="status">Player X's turn</div>
       <button onclick="resetGame()">Reset</button>
@@ -231,129 +187,11 @@
 
   <div class="ad-banner">Your Ad Here</div>
 
-  <script>
-    // CLOCK
-    function updateClock() {
-      var now = new Date();
-      var h = String(now.getHours()).padStart(2,'0');
-      var m = String(now.getMinutes()).padStart(2,'0');
-      var s = String(now.getSeconds()).padStart(2,'0');
-      document.getElementById('time').textContent = h + ':' + m + ':' + s;
-      document.getElementById('date').textContent = now.toLocaleDateString(undefined,{weekday:'long',year:'numeric',month:'long',day:'numeric'});
-    }
-    updateClock();
-    setInterval(updateClock,1000);
-
-    // WEATHER
-    async function updateWeather(lat, lon){
-      try{
-        var res=await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
-        var data=await res.json();
-        var w=data.current_weather;
-        var weatherText='Temperature: '+w.temperature+'°C | Wind: '+w.windspeed+' km/h | Dir: '+w.winddirection+'°';
-        document.getElementById('weather').textContent=weatherText;
-      }catch(e){
-        document.getElementById('weather').textContent='Unable to load weather';
-      }
-    }
-
-    var citySelect=document.getElementById('citySelect');
-
-    // FUN FACTS
-    var funFacts = [
-      "Octopuses have three hearts.","Bananas are berries, but strawberries are not.","Honey never spoils.","A day on Venus is longer than a year on Venus.","Sharks existed before trees.","Wombat poop is cube-shaped.","There are more stars in the universe than grains of sand on Earth.","Butterflies can taste with their feet.","Oxford University is older than the Aztecs.","The Eiffel Tower grows in summer.",
-      "Humans share about 60% of DNA with bananas.","Some turtles can breathe through their butts.","Scotland has 421 words for snow.","A group of flamingos is called a flamboyance.","You can't hum while holding your nose.","Cats have fewer toes on their back paws.","An octopus has blue blood.","The shortest war lasted 38 minutes.","A cloud can weigh over a million tons.","Koalas have fingerprints like humans.",
-      "Sloths can hold their breath longer than dolphins.","Hot water freezes faster than cold water sometimes.","A cockroach can live without its head for days.","The heart of a shrimp is in its head.","Some metals explode in water.","Sea otters hold hands while sleeping.","There are more fake flamingos than real ones.","The moon has moonquakes.","Cows have best friends.","Pineapples are berries too.",
-      "A sneeze travels about 160 km/h.","There are taste receptors in your gut.","Octopuses can walk on land briefly.","A jiffy is an actual unit of time.","Antarctica has blood-red waterfalls.","Banging your head against a wall burns calories.","A group of crows is a murder.","The inventor of Pringles is buried in a Pringles can.","Humans glow faintly in the dark.","There's a basketball court on the top floor of the Supreme Court.",
-      "Fish can cough.","The longest hiccup attack lasted 68 years.","A bolt of lightning is hotter than the sun.","Some frogs can freeze and survive.","There's a town that removed its apostrophe.","Dogs' noses are unique like fingerprints.","You are taller in the morning.","The brain uses 20% of body energy.","There's a species of jellyfish that is immortal.","Chewing gum boosts concentration.",
-      "An apple floats because it is 25% air.","A snail can sleep for three years.","Your stomach gets a new lining every few days.","Birds don't urinate.","There's a McDonald's in every continent except Antarctica.","Some cats are allergic to humans.","The longest English word has 189,819 letters.","Humans shed skin constantly.","The smell of rain has a name: petrichor.","There's a planet made of diamonds.",
-      "A single spaghetti noodle is called a spaghetto.","The human body contains enough fat to make soap.","Octopuses can taste with suckers.","A crocodile can't stick its tongue out.","There's a species of ant that farms aphids.","People dream in color mostly.","Your bones are stronger than steel.","There's a word for enjoying pain: algolagnia.","Butterflies remember being caterpillars.","A group of owls is a parliament.",
-      "The tongue print is unique.","Some lizards squirt blood from their eyes.","There's a town called Hell in Norway.","Humans blink about 20,000 times a day.","A mosquito has 47 teeth.","There's a font created for people with dyslexia.","The average cloud weighs over a million tons.","Bees can recognize human faces.","A shark can smell one drop of blood in water.","Rabbits can't vomit."
-    ];
-
-    var factBtn=document.getElementById('factBtn');
-    var funFactEl=document.getElementById('funFact');
-    factBtn.addEventListener('click',function(){
-      var i=Math.floor(Math.random()*funFacts.length);
-      funFactEl.textContent=funFacts[i];
-    });
-    function loadSelectedCityWeather(){
-      var coords=citySelect.value.split(',');
-      updateWeather(coords[0],coords[1]);
-    }
-
-    citySelect.addEventListener('change', loadSelectedCityWeather);
-    loadSelectedCityWeather();
-    setInterval(loadSelectedCityWeather,600000);
-
-    // FUN FACTS
-    var funFacts = Array.from({length:100}, (_,i)=>`Fun fact #${i+1}: Did you know this is one of 100 fun facts?`);
-
-    function showFunFact(){
-      var fact = funFacts[Math.floor(Math.random()*funFacts.length)];
-      document.getElementById('funFact').textContent = fact;
-    }
-
-    // TIC TAC TOE
-    var boardEl=document.getElementById('board');
-    var statusEl=document.getElementById('status');
-    var board=Array(9).fill(null);
-    var currentPlayer='X';
-    var gameOver=false;
-    var winningCombos=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
-
-    function createBoard(){
-      boardEl.innerHTML='';
-      board.forEach(function(cell,i){
-        var div=document.createElement('div');
-        div.className='cell';
-        div.textContent=cell||'';
-        div.onclick=function(){makeMove(i);};
-        boardEl.appendChild(div);
-      });
-    }
-
-    function makeMove(i){
-      if(board[i]||gameOver) return;
-      board[i]=currentPlayer;
-      if(checkWin()){
-        statusEl.textContent='Player '+currentPlayer+' wins!';
-        statusEl.classList.add('win');
-        gameOver=true;
-      }else if(board.every(Boolean)){
-        statusEl.textContent="It's a draw!";
-        gameOver=true;
-      }else{
-        currentPlayer=currentPlayer==='X'?'O':'X';
-        statusEl.textContent='Player '+currentPlayer+"'s turn";
-      }
-      createBoard();
-    }
-
-    function checkWin(){
-      var win=winningCombos.find(function(c){return c.every(function(i){return board[i]===currentPlayer;});});
-      if(win){highlightWin(win);return true;}
-      return false;
-    }
-
-    function highlightWin(combo){
-      var cells=document.querySelectorAll('.cell');
-      cells.forEach(function(cell,i){
-        if(combo.includes(i))cell.classList.add('win');
-        else cell.classList.add('lose');
-      });
-    }
-
-    function resetGame(){
-      board=Array(9).fill(null);
-      currentPlayer='X';
-      gameOver=false;
-      statusEl.textContent="Player X's turn";
-      statusEl.classList.remove('win');
-      createBoard();
-    }
-
-    createBoard();
-  </script>
+<script>
+const funFacts = Array.from({length:100},(_,i)=>`Fun fact #${i+1}: The world is amazing!`);
+function showFunFact(){
+  document.getElementById('funFact').textContent = funFacts[Math.floor(Math.random()*funFacts.length)];
+}
+</script>
 </body>
 </html>
