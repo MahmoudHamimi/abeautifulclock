@@ -209,6 +209,8 @@
         <option value="24.7136,46.6753">Riyadh</option>
       </select>
       <div class="weather" id="weather">Loading weather...</div>
+      <button id="factBtn" style="margin-top:12px">Show Fun Fact</button>
+      <div class="weather" id="funFact" style="margin-top:10px;font-style:italic"></div>
     </div>
 
     <div class="game-container">
@@ -248,6 +250,25 @@
     }
 
     var citySelect=document.getElementById('citySelect');
+
+    // FUN FACTS
+    var funFacts = [
+      "Octopuses have three hearts.","Bananas are berries, but strawberries are not.","Honey never spoils.","A day on Venus is longer than a year on Venus.","Sharks existed before trees.","Wombat poop is cube-shaped.","There are more stars in the universe than grains of sand on Earth.","Butterflies can taste with their feet.","Oxford University is older than the Aztecs.","The Eiffel Tower grows in summer.",
+      "Humans share about 60% of DNA with bananas.","Some turtles can breathe through their butts.","Scotland has 421 words for snow.","A group of flamingos is called a flamboyance.","You can't hum while holding your nose.","Cats have fewer toes on their back paws.","An octopus has blue blood.","The shortest war lasted 38 minutes.","A cloud can weigh over a million tons.","Koalas have fingerprints like humans.",
+      "Sloths can hold their breath longer than dolphins.","Hot water freezes faster than cold water sometimes.","A cockroach can live without its head for days.","The heart of a shrimp is in its head.","Some metals explode in water.","Sea otters hold hands while sleeping.","There are more fake flamingos than real ones.","The moon has moonquakes.","Cows have best friends.","Pineapples are berries too.",
+      "A sneeze travels about 160 km/h.","There are taste receptors in your gut.","Octopuses can walk on land briefly.","A jiffy is an actual unit of time.","Antarctica has blood-red waterfalls.","Banging your head against a wall burns calories.","A group of crows is a murder.","The inventor of Pringles is buried in a Pringles can.","Humans glow faintly in the dark.","There's a basketball court on the top floor of the Supreme Court.",
+      "Fish can cough.","The longest hiccup attack lasted 68 years.","A bolt of lightning is hotter than the sun.","Some frogs can freeze and survive.","There's a town that removed its apostrophe.","Dogs' noses are unique like fingerprints.","You are taller in the morning.","The brain uses 20% of body energy.","There's a species of jellyfish that is immortal.","Chewing gum boosts concentration.",
+      "An apple floats because it is 25% air.","A snail can sleep for three years.","Your stomach gets a new lining every few days.","Birds don't urinate.","There's a McDonald's in every continent except Antarctica.","Some cats are allergic to humans.","The longest English word has 189,819 letters.","Humans shed skin constantly.","The smell of rain has a name: petrichor.","There's a planet made of diamonds.",
+      "A single spaghetti noodle is called a spaghetto.","The human body contains enough fat to make soap.","Octopuses can taste with suckers.","A crocodile can't stick its tongue out.","There's a species of ant that farms aphids.","People dream in color mostly.","Your bones are stronger than steel.","There's a word for enjoying pain: algolagnia.","Butterflies remember being caterpillars.","A group of owls is a parliament.",
+      "The tongue print is unique.","Some lizards squirt blood from their eyes.","There's a town called Hell in Norway.","Humans blink about 20,000 times a day.","A mosquito has 47 teeth.","There's a font created for people with dyslexia.","The average cloud weighs over a million tons.","Bees can recognize human faces.","A shark can smell one drop of blood in water.","Rabbits can't vomit."
+    ];
+
+    var factBtn=document.getElementById('factBtn');
+    var funFactEl=document.getElementById('funFact');
+    factBtn.addEventListener('click',function(){
+      var i=Math.floor(Math.random()*funFacts.length);
+      funFactEl.textContent=funFacts[i];
+    });
     function loadSelectedCityWeather(){
       var coords=citySelect.value.split(',');
       updateWeather(coords[0],coords[1]);
