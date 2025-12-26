@@ -188,10 +188,104 @@
   <div class="ad-banner">Your Ad Here</div>
 
 <script>
+// CLOCK
+function updateClock() {
+  const now = new Date();
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const s = String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('time').textContent = `${h}:${m}:${s}`;
+  document.getElementById('date').textContent = now.toLocaleDateString(undefined,{
+    weekday:'long', year:'numeric', month:'long', day:'numeric'
+  });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// WEATHER
+async function updateWeather(lat, lon){
+  try{
+    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+    const data = await res.json();
+    const w = data.current_weather;
+    document.getElementById('weather').textContent = `Temperature: ${w.temperature}°C | Wind: ${w.windspeed} km/h`;
+  }catch(e){
+    document.getElementById('weather').textContent = 'Unable to load weather';
+  }
+}
+
+const citySelect = document.getElementById('citySelect');
+function loadSelectedCityWeather(){
+  const [lat, lon] = citySelect.value.split(',');
+  updateWeather(lat, lon);
+}
+citySelect.addEventListener('change', loadSelectedCityWeather);
+loadSelectedCityWeather();
+
+// FUN FACTS
 const funFacts = Array.from({length:100},(_,i)=>`Fun fact #${i+1}: The world is amazing!`);
 function showFunFact(){
   document.getElementById('funFact').textContent = funFacts[Math.floor(Math.random()*funFacts.length)];
 }
+
+// TIC TAC TOE
+const boardEl = document.getElementById('board');
+const statusEl = document.getElementById('status');
+let board = Array(9).fill(null);
+let currentPlayer = 'X';
+let gameOver = false;
+const winningCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+
+function createBoard(){
+  boardEl.innerHTML = '';
+  board.forEach((cell,i)=>{
+    const div = document.createElement('div');
+    div.className = 'cell';
+    div.textContent = cell || '';
+    div.onclick = ()=>makeMove(i);
+    boardEl.appendChild(div);
+  });
+}
+
+function makeMove(i){
+  if(board[i] || gameOver) return;
+  board[i] = currentPlayer;
+  if(checkWin()){
+    statusEl.textContent = `Player ${currentPlayer} wins!`;
+    statusEl.classList.add('win');
+    gameOver = true;
+  } else if(board.every(Boolean)){
+    statusEl.textContent = "It's a draw!";
+    gameOver = true;
+  } else {
+    currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
+    statusEl.textContent = `Player ${currentPlayer}'s turn`;
+  }
+  createBoard();
+}
+
+function checkWin(){
+  const win = winningCombos.find(c => c.every(i => board[i] === currentPlayer));
+  if(win){ highlightWin(win); return true; }
+  return false;
+}
+
+function highlightWin(combo){
+  document.querySelectorAll('.cell').forEach((cell,i)=>{
+    cell.classList.add(combo.includes(i) ? 'win' : 'lose');
+  });
+}
+
+function resetGame(){
+  board = Array(9).fill(null);
+  currentPlayer = 'X';
+  gameOver = false;
+  statusEl.textContent = "Player X's turn";
+  statusEl.classList.remove('win');
+  createBoard();
+}
+
+createBoard();
 </script>
 </body>
 </html>
