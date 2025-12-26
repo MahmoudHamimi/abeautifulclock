@@ -46,34 +46,36 @@
     .clock-container,
     .game-container,
     .weather-container {
-      background: var(--surface);
-      backdrop-filter: blur(14px);
-      border-radius: 22px;
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255,255,255,0.18);
-    }
-
-    .clock-container {
-      padding: 42px 76px;
-      text-align: center;
-    }
-
-    .time {
-      font-size: clamp(4rem, 9vw, 7.5rem);
-      font-weight: 600;
-      letter-spacing: 3px;
-    }
-
-    .date {
-      margin-top: 14px;
-      font-size: 1.15rem;
-      color: var(--text-muted);
-    }
-
-    .weather-container {
       padding: 28px;
       text-align: center;
       min-width: 260px;
+    }
+
+    .funfact-container {
+      margin-top: 40px;
+      padding: 36px 60px;
+      max-width: 800px;
+      background: linear-gradient(135deg, rgba(56,189,248,0.25), rgba(37,99,235,0.25));
+      backdrop-filter: blur(16px);
+      border-radius: 28px;
+      text-align: center;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.25);
+    }
+
+    .funfact-text {
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.8;
+      margin-bottom: 26px;
+      color: #f8fafc;
+    }
+
+    .funfact-btn {
+      padding: 14px 40px;
+      font-size: 1.15rem;
+      font-weight: 600;
+      border-radius: 16px;
     }
 
     .weather-container select {
@@ -213,6 +215,12 @@
       <div class="weather" id="funFact" style="margin-top:14px;font-style:italic;font-size:1.25rem;line-height:1.6"></div>
     </div>
 
+    <!-- FUN FACT SECTION -->
+    <div class="funfact-container">
+      <div class="funfact-text" id="funFact">Click the button to see a fun fact!</div>
+      <button class="funfact-btn" onclick="showFunFact()">Show Fun Fact</button>
+    </div>
+
     <div class="game-container">
       <h2>Tic Tac Toe</h2>
       <div class="board" id="board"></div>
@@ -277,6 +285,14 @@
     citySelect.addEventListener('change', loadSelectedCityWeather);
     loadSelectedCityWeather();
     setInterval(loadSelectedCityWeather,600000);
+
+    // FUN FACTS
+    var funFacts = Array.from({length:100}, (_,i)=>`Fun fact #${i+1}: Did you know this is one of 100 fun facts?`);
+
+    function showFunFact(){
+      var fact = funFacts[Math.floor(Math.random()*funFacts.length)];
+      document.getElementById('funFact').textContent = fact;
+    }
 
     // TIC TAC TOE
     var boardEl=document.getElementById('board');
