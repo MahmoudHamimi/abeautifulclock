@@ -69,6 +69,12 @@
       color: var(--text-muted);
     }
 
+    .views {
+      margin-top: 10px;
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
     .weather-container {
       padding: 28px;
       text-align: center;
@@ -157,17 +163,19 @@
   </style>
 </head>
 <body>
+
   <div class="layout">
     <div class="clock-container">
       <div class="time" id="time"></div>
       <div class="date" id="date"></div>
+      <div class="views" id="viewCounter">Views: loading...</div>
     </div>
 
     <div class="weather-container">
       <h2>Weather</h2>
       <select id="citySelect">
         <option value="31.2001,29.9187" selected>Alexandria</option>
-        <option value="31.2001,29.9187">Cairo</option>
+        <option value="30.0444,31.2357">Cairo</option>
         <option value="31.2304,121.4737">Shanghai</option>
         <option value="38.9072,-77.0369">Washington</option>
         <option value="51.5074,-0.1278">London</option>
@@ -188,164 +196,99 @@
   <div class="ad-banner">Your Ad Here</div>
 
 <script>
-// CLOCK
+/* ================= VIEW COUNTER ================= */
+async function updateViewCount() {
+  try {
+    const res = await fetch(
+      "https://api.countapi.xyz/hit/your-site-name.vercel.app/views"
+    );
+    const data = await res.json();
+    document.getElementById("viewCounter").textContent =
+      `Views: ${data.value}`;
+  } catch {
+    document.getElementById("viewCounter").textContent =
+      "Views: unavailable";
+  }
+}
+updateViewCount();
+
+/* ================= CLOCK ================= */
 function updateClock() {
   const now = new Date();
-  const h = String(now.getHours()).padStart(2,'0');
-  const m = String(now.getMinutes()).padStart(2,'0');
-  const s = String(now.getSeconds()).padStart(2,'0');
-  document.getElementById('time').textContent = `${h}:${m}:${s}`;
-  document.getElementById('date').textContent = now.toLocaleDateString(undefined,{
-    weekday:'long', year:'numeric', month:'long', day:'numeric'
-  });
+  document.getElementById('time').textContent =
+    now.toLocaleTimeString([], { hour12: false });
+  document.getElementById('date').textContent =
+    now.toLocaleDateString(undefined,{
+      weekday:'long', year:'numeric', month:'long', day:'numeric'
+    });
 }
 updateClock();
 setInterval(updateClock, 1000);
 
-// WEATHER
+/* ================= WEATHER ================= */
 async function updateWeather(lat, lon){
   try{
-    const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`);
+    const res = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true`
+    );
     const data = await res.json();
     const w = data.current_weather;
-    document.getElementById('weather').textContent = `Temperature: ${w.temperature}°C | Wind: ${w.windspeed} km/h`;
-  }catch(e){
-    document.getElementById('weather').textContent = 'Unable to load weather';
+    document.getElementById('weather').textContent =
+      `Temperature: ${w.temperature}°C | Wind: ${w.windspeed} km/h`;
+  } catch {
+    document.getElementById('weather').textContent =
+      'Unable to load weather';
   }
 }
 
 const citySelect = document.getElementById('citySelect');
-function loadSelectedCityWeather(){
+citySelect.addEventListener('change', () => {
   const [lat, lon] = citySelect.value.split(',');
   updateWeather(lat, lon);
-}
-citySelect.addEventListener('change', loadSelectedCityWeather);
-loadSelectedCityWeather();
+});
+updateWeather(31.2001, 29.9187);
 
-// FUN FACTS
+/* ================= FUN FACT ================= */
 const funFacts = [
-  "Honey never spoils — jars found in ancient tombs are still edible.",
-  "Bananas are berries, but strawberries are not.",
-  "Octopuses have three hearts and blue blood.",
-  "A day on Venus is longer than a year on Venus.",
-  "Wombat poop is cube-shaped.",
-  "Sharks existed before trees.",
-  "The Eiffel Tower grows about 15 cm taller in summer.",
-  "There are more stars in the universe than grains of sand on Earth.",
-  "Your brain uses about 20% of your body's energy.",
-  "Butterflies remember being caterpillars.",
-  "Scotland has over 400 words for snow.",
-  "Water can boil and freeze at the same time (triple point).",
-  "The human nose can remember 50,000 different scents.",
-  "A group of flamingos is called a flamboyance.",
-  "Oxford University is older than the Aztecs.",
-  "Turtles can breathe through their butts.",
-  "There are more possible games of chess than atoms in the universe.",
-  "Some metals explode in water.",
-  "You share about 60% of your DNA with bananas.",
-  "The heart of a shrimp is in its head.",
-  "A cloud can weigh over a million tons.",
-  "Sloths can hold their breath longer than dolphins.",
-  "Saturn could float in water (theoretically).",
-  "Your stomach gets a new lining every few days.",
-  "Antarctica is the largest desert on Earth.",
-  "There are more trees on Earth than stars in the Milky Way.",
-  "Some cats are allergic to humans.",
-  "An octopus has nine brains.",
-  "The smell of rain has a name: petrichor.",
-  "Humans glow faintly in the dark, but we can't see it.",
-  "A single teaspoon of honey is a lifetime of work for 12 bees.",
-  "The Moon is drifting away from Earth each year.",
-  "Koalas have fingerprints almost identical to humans.",
-  "There are more fake flamingos than real ones in the world.",
-  "Venus flytraps can count.",
-  "Some clouds are rainbow-colored.",
-  "A cockroach can live without its head for days.",
-  "Cows have best friends.",
-  "The longest hiccuping spree lasted 68 years.",
-  "A bolt of lightning is five times hotter than the sun.",
-  "The human body contains enough iron to make a small nail.",
-  "A snail can sleep for three years.",
-  "The shortest war in history lasted 38 minutes.",
-  "Sea otters hold hands while sleeping.",
-  "Some frogs can freeze and survive.",
-  "The first computer bug was an actual bug.",
-  "There are more possible Sudoku puzzles than atoms in the universe.",
-  "Jellyfish have existed for over 500 million years.",
-  "You blink about 20 times per minute.",
-  "Plants can communicate with each other.",
-  "The color of Coca-Cola is green under certain conditions.",
-  "A human could swim through a blue whale's veins.",
-  "Some birds sleep while flying.",
-  "The average cloud weighs more than a million kilograms.",
-  "Mars has blue sunsets.",
-  "There are taste receptors in your lungs.",
-  "Your bones are about five times stronger than steel.",
-  "A group of crows is called a murder.",
-  "Some fish can walk on land.",
-  "The human body renews itself every 7–10 years.",
-  "There are more bacteria in your body than human cells.",
-  "The longest English word has 189,819 letters.",
-  "Penguins propose with pebbles.",
-  "Some metals remember their shape.",
-  "A strawberry has about 200 seeds on the outside.",
-  "The brain is sometimes more active during sleep.",
-  "Hot water can freeze faster than cold water.",
-  "There are clouds that glow at night.",
-  "Your tongue print is as unique as your fingerprint.",
-  "Some spiders can fly using electric fields.",
-  "The largest living structure on Earth is the Great Barrier Reef.",
-  "The human eye can distinguish about 10 million colors.",
-  "There are more possible card shuffles than atoms on Earth.",
-  "A group of owls is called a parliament.",
-  "Some whales sing songs that last hours.",
-  "The speed of smell is faster than you think.",
-  "An average person walks the equivalent of five times around Earth in their lifetime.",
-  "The universe has no center.",
-  "Some trees can communicate through underground fungi.",
-  "Your brain generates enough electricity to power a small light.",
-  "There are invisible colors humans can't see.",
-  "A single human hair can support up to 100 grams.",
-  "Some animals can regrow entire limbs.",
-  "The sound of a lion's roar can be heard 8 km away.",
-  "There are more ways to shuffle a deck of cards than seconds since the Big Bang.",
-  "The human heart beats about 100,000 times a day.",
-  "Some deserts can flood with flowers overnight.",
-  "A group of jellyfish is called a smack.",
-  "There are storms on Jupiter larger than Earth."
+  "Honey never spoils.",
+  "Octopuses have three hearts.",
+  "Bananas are berries.",
+  "A day on Venus is longer than a year."
 ];
+
 function showFunFact(){
-  document.getElementById('funFact').textContent = funFacts[Math.floor(Math.random()*funFacts.length)];
+  document.getElementById('funFact').textContent =
+    funFacts[Math.floor(Math.random() * funFacts.length)];
 }
 
-// TIC TAC TOE
+/* ================= TIC TAC TOE ================= */
 const boardEl = document.getElementById('board');
 const statusEl = document.getElementById('status');
 let board = Array(9).fill(null);
 let currentPlayer = 'X';
 let gameOver = false;
-const winningCombos = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+const wins = [[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 
 function createBoard(){
   boardEl.innerHTML = '';
-  board.forEach((cell,i)=>{
-    const div = document.createElement('div');
-    div.className = 'cell';
-    div.textContent = cell || '';
-    div.onclick = ()=>makeMove(i);
-    boardEl.appendChild(div);
+  board.forEach((c,i)=>{
+    const d = document.createElement('div');
+    d.className = 'cell';
+    d.textContent = c || '';
+    d.onclick = ()=>move(i);
+    boardEl.appendChild(d);
   });
 }
 
-function makeMove(i){
+function move(i){
   if(board[i] || gameOver) return;
   board[i] = currentPlayer;
-  if(checkWin()){
+  if(wins.some(w => w.every(i => board[i] === currentPlayer))){
     statusEl.textContent = `Player ${currentPlayer} wins!`;
     statusEl.classList.add('win');
     gameOver = true;
   } else if(board.every(Boolean)){
-    statusEl.textContent = "It's a draw!";
+    statusEl.textContent = "Draw!";
     gameOver = true;
   } else {
     currentPlayer = currentPlayer === 'X' ? 'O' : 'X';
@@ -354,20 +297,8 @@ function makeMove(i){
   createBoard();
 }
 
-function checkWin(){
-  const win = winningCombos.find(c => c.every(i => board[i] === currentPlayer));
-  if(win){ highlightWin(win); return true; }
-  return false;
-}
-
-function highlightWin(combo){
-  document.querySelectorAll('.cell').forEach((cell,i)=>{
-    cell.classList.add(combo.includes(i) ? 'win' : 'lose');
-  });
-}
-
 function resetGame(){
-  board = Array(9).fill(null);
+  board.fill(null);
   currentPlayer = 'X';
   gameOver = false;
   statusEl.textContent = "Player X's turn";
